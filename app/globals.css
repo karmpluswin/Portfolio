@@ -1,0 +1,204 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Diatype Semi Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("Diatype Semi Mono"),
+    local("ABCDiatypeSemi-Mono-Regular"),
+    url("/fonts/ABCDiatypeSemi-Mono-Regular.woff2") format("woff2"),
+    url("/fonts/ABCDiatypeSemi-Mono-Regular.woff") format("woff");
+}
+
+@font-face {
+  font-family: "ABC Diatype Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("ABC Diatype Mono"),
+    url("/fonts/ABC%20Diatype%20Mono.woff") format("woff");
+}
+
+@font-face {
+  font-family: "ABC Diatype Mono Digits";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("ABC Diatype Mono"),
+    url("/fonts/ABC%20Diatype%20Mono.woff") format("woff");
+  unicode-range: U+0030-0039, U+003A, U+002F, U+002D;
+}
+
+:root {
+  color-scheme: light;
+  --background: #ffffff;
+  --text: #000000;
+  --secondary: #666666;
+  --line: #e5e5e5;
+  --hover: #0000ff;
+  --theme-duration: 520ms;
+}
+
+html.dark {
+  color-scheme: dark;
+  --background: #000000;
+  --text: #ffffff;
+  --secondary: #aaaaaa;
+  --line: #262626;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family:
+    "ABC Diatype Mono Digits", "Diatype Semi Mono", "ABC Diatype Semi-Mono",
+    "SF Mono", "SFMono-Regular", ui-monospace, Menlo, Monaco, "Cascadia Mono",
+    Consolas, monospace;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+}
+
+@media (min-width: 640px) {
+  body {
+    font-size: 17px;
+  }
+}
+
+:where(
+  body,
+  header,
+  main,
+  footer,
+  section,
+  article,
+  aside,
+  nav,
+  div,
+  button,
+  input,
+  textarea,
+  select
+) {
+  transition-property:
+    color, background-color, border-color, outline-color, box-shadow, fill,
+    stroke;
+  transition-duration: var(--theme-duration);
+  transition-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(
+    body,
+    header,
+    main,
+    footer,
+    section,
+    article,
+    aside,
+    nav,
+    div,
+    button,
+    input,
+    textarea,
+    select
+  ) {
+    transition-duration: 0ms;
+  }
+}
+
+a {
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+a:hover {
+  color: var(--hover);
+}
+
+button {
+  cursor: pointer;
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Theme wipe (top -> bottom) using View Transitions API */
+::view-transition-group(root),
+::view-transition-image-pair(root) {
+  animation: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--theme-duration);
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  animation: none;
+}
+
+::view-transition-new(root) {
+  animation-name: theme-wipe-top-down;
+  will-change: clip-path;
+}
+
+@keyframes theme-wipe-top-down {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+html.theme-revealing
+  :where(
+    body,
+    header,
+    main,
+    footer,
+    section,
+    article,
+    aside,
+    nav,
+    div,
+    button,
+    input,
+    textarea,
+    select
+  ) {
+  transition-duration: 0ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

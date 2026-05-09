@@ -41,6 +41,24 @@
   --line: #e5e5e5;
   --hover: #0000ff;
   --theme-duration: 520ms;
+  --expo-out: linear(
+    0 0%,
+    0.1684 2.66%,
+    0.3165 5.49%,
+    0.446 8.52%,
+    0.5581 11.78%,
+    0.6535 15.29%,
+    0.7341 19.11%,
+    0.8011 23.3%,
+    0.8557 27.93%,
+    0.8962 32.68%,
+    0.9283 38.01%,
+    0.9529 44.08%,
+    0.9711 51.14%,
+    0.9833 59.06%,
+    0.9915 68.74%,
+    1 100%
+  );
 }
 
 html.dark {
@@ -144,36 +162,31 @@ button {
   touch-action: manipulation;
 }
 
-/* Theme wipe (top -> bottom) using View Transitions API */
-::view-transition-group(root),
-::view-transition-image-pair(root) {
-  animation: none;
+/* Theme toggle effect: Circle blur (top-right) using View Transitions API */
+::view-transition-group(root) {
+  animation-timing-function: var(--expo-out);
+}
+
+::view-transition-new(root) {
+  mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><defs><filter id="blur"><feGaussianBlur stdDeviation="2"/></filter></defs><circle cx="40" cy="0" r="18" fill="white" filter="url(%23blur)"/></svg>')
+    top right / 0 no-repeat;
+  mask-origin: content-box;
+  animation: theme-circle-blur-scale 1s;
+  animation-fill-mode: both;
+  transform-origin: top right;
 }
 
 ::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: var(--theme-duration);
-  animation-timing-function: linear;
+.dark::view-transition-old(root) {
+  animation: theme-circle-blur-scale 1s;
   animation-fill-mode: both;
-  opacity: 1;
-  mix-blend-mode: normal;
+  transform-origin: top right;
+  z-index: -1;
 }
 
-::view-transition-old(root) {
-  animation: none;
-}
-
-::view-transition-new(root) {
-  animation-name: theme-wipe-top-down;
-  will-change: clip-path;
-}
-
-@keyframes theme-wipe-top-down {
-  from {
-    clip-path: inset(0 0 100% 0);
-  }
+@keyframes theme-circle-blur-scale {
   to {
-    clip-path: inset(0 0 0 0);
+    mask-size: 350vmax;
   }
 }
 
@@ -201,4 +214,11 @@ html.theme-revealing
   ::view-transition-new(root) {
     animation: none;
   }
+}
+
+/* While the `initial-loading` class is present on <html>, hide all body
+   children except the loader element (which has the data-initial-loader
+   attribute). This prevents the main page flashing before the loader runs. */
+html.initial-loading body > *:not([data-initial-loader]) {
+  visibility: hidden;
 }

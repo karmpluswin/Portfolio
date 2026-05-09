@@ -1,31 +1,18 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { ArrowUpRightIcon } from "lucide-react";
 
-type Project = {
-  date: string;
-  name: string;
-  github: string;
-  live?: string;
-  description?: string;
+import { PROJECTS, type Project } from "@/lib/projects";
+
+type TimelineProps = {
+  projects?: Project[];
+  limit?: number;
+  showHeader?: boolean;
+  showAll?: boolean;
+  showAllHref?: string;
 };
-
-const projects: Project[] = [
-  {
-    date: "May 2026",
-    name: "prototype",
-    github: "#",
-    live: "#",
-    description: "Prototype project — description coming soon.",
-  },
-  {
-    date: "May 2026",
-    name: "prototype",
-    github: "#",
-    live: "#",
-    description: "Prototype project — description coming soon.",
-  },
-];
 
 function GitHubIcon() {
   return (
@@ -60,12 +47,23 @@ function ChevronIcon({ direction }: { direction: "down" | "up" }) {
   );
 }
 
-export default function Timeline() {
+export default function Timeline({
+  projects = PROJECTS,
+  limit,
+  showHeader = false,
+  showAll = false,
+  showAllHref = "/projects",
+}: TimelineProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const descriptionRef = useRef<Array<HTMLDivElement | null>>([]);
   const [descriptionHeight, setDescriptionHeight] = useState<
     Record<number, number>
   >({});
+
+  const featured = projects.filter((p) => p.featured);
+  const baseList = featured.length > 0 ? featured : projects;
+  const visibleProjects =
+    typeof limit === "number" ? baseList.slice(0, limit) : baseList;
 
   useLayoutEffect(() => {
     if (openIndex === null) return;
@@ -79,7 +77,7 @@ export default function Timeline() {
     }));
   }, [openIndex]);
 
-  if (projects.length === 0) {
+  if (visibleProjects.length === 0) {
     return (
       <section className="flex min-h-40 items-center justify-center py-10 text-[var(--text)]">
         Coming soon
@@ -89,7 +87,26 @@ export default function Timeline() {
 
   return (
     <section aria-label="Projects" className="space-y-4">
-      {projects.map((project, index) => {
+      {showHeader ? (
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-xs font-medium uppercase tracking-wider text-[var(--secondary)]">
+            Projects
+          </h2>
+          {showAll ? (
+            <Link
+              href={showAllHref}
+              className="group inline-flex items-center gap-2 rounded-none border border-[var(--line)] bg-transparent px-2.5 py-1 text-xs font-medium text-[var(--secondary)] hover:text-[var(--text)]"
+            >
+              <span>Show all</span>
+              <ArrowUpRightIcon className="size-3 text-current" />
+            </Link>
+          ) : (
+            <span aria-hidden="true" />
+          )}
+        </div>
+      ) : null}
+
+      {visibleProjects.map((project, index) => {
         const isOpen = openIndex === index;
 
         return (

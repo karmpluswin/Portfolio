@@ -1,7 +1,11 @@
 "use client";
 
+import { MoonIcon, SunMediumIcon } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+
+import { useClickSound } from "@/hooks/soundcn/use-click-sound";
+import { nameFont } from "@/app/fonts";
 
 const links = [
   { label: "X", href: "https://x.com/karmpluswin" },
@@ -9,13 +13,7 @@ const links = [
   { label: "Linkedin", href: "https://linkedin.com/in/karmjeetchauhan" },
 ];
 
-const roles = [
-  {
-    title: "SDE Intern",
-    org: "ISRO",
-    href: "https://www.isro.gov.in/",
-  },
-];
+const THEME_STORAGE_KEY = "portfolio:theme";
 
 function getISTTime() {
   return new Intl.DateTimeFormat("en-IN", {
@@ -30,12 +28,29 @@ function getISTTime() {
 }
 
 function updateTheme(nextDark: boolean) {
-  document.documentElement.classList.toggle("dark", nextDark);
+  const root = document.documentElement;
+  root.classList.toggle("dark", nextDark);
+  root.classList.toggle("light", !nextDark);
+}
+
+function persistTheme(nextDark: boolean) {
+  try {
+    window.localStorage.setItem(THEME_STORAGE_KEY, nextDark ? "dark" : "light");
+  } catch {
+    // ignore
+  }
+}
+
+function applyTheme(nextDark: boolean) {
+  updateTheme(nextDark);
+  persistTheme(nextDark);
 }
 
 export default function Header() {
   const [time, setTime] = useState("");
   const [dark, setDark] = useState(false);
+
+  const [click] = useClickSound();
 
   useEffect(() => {
     setTime(getISTTime());
@@ -44,8 +59,25 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    updateTheme(dark);
-  }, [dark]);
+    // Initialize theme from localStorage, otherwise fall back to system preference.
+    let nextDark = document.documentElement.classList.contains("dark");
+
+    try {
+      const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+      if (stored === "dark") nextDark = true;
+      else if (stored === "light") nextDark = false;
+      else {
+        nextDark =
+          window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ??
+          nextDark;
+      }
+    } catch {
+      // ignore
+    }
+
+    setDark(nextDark);
+    applyTheme(nextDark);
+  }, []);
 
   function toggleTheme() {
     const nextDark = !dark;
@@ -54,8 +86,11 @@ export default function Header() {
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
+    click();
+
     if (reducedMotion) {
       setDark(nextDark);
+      applyTheme(nextDark);
       return;
     }
 
@@ -66,6 +101,7 @@ export default function Header() {
 
     if (!supportsViewTransition) {
       setDark(nextDark);
+      applyTheme(nextDark);
       return;
     }
 
@@ -79,6 +115,7 @@ export default function Header() {
       }
     ).startViewTransition(() => {
       setDark(nextDark);
+      applyTheme(nextDark);
     });
 
     transition.finished.finally(() => {
@@ -98,8 +135,10 @@ export default function Header() {
             priority
             className="mb-3 rounded-[6px]"
           />
-          <h1 className="text-[30px] font-semibold leading-[1.25] text-[var(--text)]">
-            Karmjeet Chauhan
+          <h1
+            className={`${nameFont.className} text-[34px] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text)] sm:text-[38px]`}
+          >
+            Rolex
           </h1>
         </div>
         <div className="shrink-0">
@@ -108,9 +147,10 @@ export default function Header() {
             aria-label={dark ? "Use light mode" : "Use dark mode"}
             aria-pressed={dark}
             onClick={toggleTheme}
-            className="inline-flex -m-2 size-8 items-start justify-end p-2"
+            className="inline-flex size-9 items-center justify-center rounded-full border border-[var(--line)] bg-transparent text-[var(--text)]"
           >
-            <span className="size-4 rounded-full bg-[var(--text)]" />
+            <MoonIcon className="hidden size-4 [html.dark_&]:block" />
+            <SunMediumIcon className="hidden size-4 [html.light_&]:block" />
           </button>
         </div>
       </div>
@@ -123,18 +163,6 @@ export default function Header() {
           {time}
         </time>
       </div>
-
-      <p className="text-[var(--text)]">
-        {roles.map((role, index) => (
-          <span key={`${role.title}-${role.org}`}>
-            {role.title}{" "}
-            <a href={role.href} target="_blank" rel="noreferrer">
-              {role.org}
-            </a>
-            {index < roles.length - 1 ? " \u00b7 " : null}
-          </span>
-        ))}
-      </p>
 
       <nav
         aria-label="Personal links"

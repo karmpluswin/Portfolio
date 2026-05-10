@@ -48,4 +48,28 @@ export const PROJECTS: Project[] = [
     description: "Prototype project — description coming soon.",
     featured: true,
   },
+  {
+    date: "May 2026",
+    name: "prototype",
+    github: "#",
+    live: "#",
+    description: "Prototype project — description coming soon.",
+    featured: true,
+  },
+  {
+    date: "May 2026",
+    name: "prototype",
+    github: "#",
+    live: "#",
+    description: "Prototype project — description coming soon.",
+    featured: true,
+  },
+  {
+    date: "May 2026",
+    name: "prototype",
+    github: "#",
+    live: "#",
+    description: "Prototype project — description coming soon.",
+    featured: true,
+  },
 ];

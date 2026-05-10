@@ -21,25 +21,17 @@ function prefersReducedMotion(): boolean {
 export default function InitialLoaderGate({
   children,
 }: InitialLoaderGateProps) {
-  const [showLoader, setShowLoader] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
   const [mounted, setMounted] = useState(false);
 
   const shouldShow = useMemo(() => {
-    if (!mounted) return false;
+    if (!mounted) return true; // Assume true on server to prevent blink
     if (prefersReducedMotion()) return false;
     return showLoader;
   }, [mounted, showLoader]);
 
   useEffect(() => {
     setMounted(true);
-
-    try {
-      const seen = window.sessionStorage.getItem(STORAGE_KEY) === "1";
-      if (!seen && !prefersReducedMotion()) setShowLoader(true);
-    } catch {
-      // If storage is blocked, still show once.
-      if (!prefersReducedMotion()) setShowLoader(true);
-    }
   }, []);
 
   useEffect(() => {
@@ -65,28 +57,20 @@ export default function InitialLoaderGate({
     if (!shouldShow) return;
     // Safety net: never block the UI indefinitely.
     const t = window.setTimeout(() => {
-      try {
-        window.sessionStorage.setItem(STORAGE_KEY, "1");
-      } catch {}
-      setShowLoader(false);
+      handleComplete();
     }, 9000);
     return () => window.clearTimeout(t);
   }, [shouldShow]);
 
   const handleComplete = () => {
     try {
-      window.sessionStorage.setItem(STORAGE_KEY, "1");
-      try {
-        document.documentElement.classList.remove("initial-loading");
-      } catch {}
+      document.documentElement.classList.remove("initial-loading");
     } catch {}
     setShowLoader(false);
   };
 
   return (
     <>
-      {children}
-
       <AnimatePresence>
         {shouldShow ? (
           <motion.div
@@ -109,6 +93,9 @@ export default function InitialLoaderGate({
           </motion.div>
         ) : null}
       </AnimatePresence>
+
+      {/* Render children unconditionally so they exist in DOM (SEO), but they are hidden via CSS until loader finishes */}
+      {children}
     </>
   );
 }

@@ -1,9 +1,9 @@
 "use client";
 
 import ReactMarkdown from "react-markdown";
-import { useMemo, useState } from "react";
-
+import { useMemo, useState, useLayoutEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { nameFont } from "@/app/fonts";
 
 export type ExperiencePositionItemType = {
   id: string;
@@ -175,24 +175,34 @@ function ExperienceItem({ experience }: { experience: ExperienceItemType }) {
         }}
         disabled={!canToggle}
         className={cn(
-          "flex w-full items-baseline justify-between gap-3 text-left",
+          "flex w-full items-center justify-between gap-3 text-left",
           canToggle ? "cursor-pointer" : "cursor-default",
         )}
         aria-expanded={open}
       >
-        <h3 className="text-[20px] font-semibold leading-snug text-[var(--text)]">
-          {experience.companyWebsite ? (
-            <a
-              href={experience.companyWebsite}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {experience.companyName}
-            </a>
-          ) : (
-            experience.companyName
-          )}
-        </h3>
+        <div className="flex items-center gap-3">
+          {experience.companyLogo ? (
+            <img
+              src={experience.companyLogo}
+              alt={`${experience.companyName} logo`}
+              className="w-10 h-10 rounded-sm object-cover border border-[var(--line)]"
+            />
+          ) : null}
+
+          <h3 className={`${nameFont.className} text-[20px] font-semibold leading-snug text-[var(--text)]`}>
+            {experience.companyWebsite ? (
+              <a
+                href={experience.companyWebsite}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {experience.companyName}
+              </a>
+            ) : (
+              experience.companyName
+            )}
+          </h3>
+        </div>
 
         <div className="flex shrink-0 items-center gap-2">
           {rangeLabel ? (
@@ -222,6 +232,15 @@ function ExperiencePositionBlock({
   position: ExperiencePositionItemType;
   open: boolean;
 }) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState<number>(0);
+
+  useLayoutEffect(() => {
+    if (open && contentRef.current) {
+      setHeight(contentRef.current.scrollHeight);
+    }
+  }, [open]);
+
   return (
     <div className="space-y-2">
       <p className="text-[15px] text-[var(--secondary)]">
@@ -247,23 +266,37 @@ function ExperiencePositionBlock({
         </div>
       ) : null}
 
-      {open && position.description ? (
-        <div className="pt-1 text-[15px] text-[var(--secondary)]">
-          <ReactMarkdown
-            components={{
-              a: (props) => <a {...props} target="_blank" rel="noreferrer" />,
-              p: (props) => <p {...props} className="mb-2 last:mb-0" />,
-              ul: (props) => (
-                <ul
-                  {...props}
-                  className="ml-5 list-disc space-y-1 marker:text-[var(--secondary)]"
-                />
-              ),
-              li: (props) => <li {...props} className="leading-relaxed" />,
-            }}
-          >
-            {position.description}
-          </ReactMarkdown>
+      {position.description ? (
+        <div
+          aria-hidden={!open}
+          style={{
+            height: open ? `${height}px` : "0px",
+            opacity: open ? 1 : 0,
+            overflow: "hidden",
+            transitionProperty: "height, opacity",
+            transitionDuration: "260ms",
+            transitionTimingFunction: "ease",
+            pointerEvents: open ? "auto" : "none",
+            willChange: "height, opacity",
+          }}
+        >
+          <div ref={contentRef} className="pt-1 text-[15px] text-[var(--secondary)]">
+            <ReactMarkdown
+              components={{
+                a: (props) => <a {...props} target="_blank" rel="noreferrer" />,
+                p: (props) => <p {...props} className="mb-2 last:mb-0" />,
+                ul: (props) => (
+                  <ul
+                    {...props}
+                    className="ml-5 list-disc space-y-1 marker:text-[var(--secondary)]"
+                  />
+                ),
+                li: (props) => <li {...props} className="leading-relaxed" />,
+              }}
+            >
+              {position.description}
+            </ReactMarkdown>
+          </div>
         </div>
       ) : null}
     </div>

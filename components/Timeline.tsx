@@ -61,7 +61,8 @@ export default function Timeline({
   >({});
 
   const featured = projects.filter((p) => p.featured);
-  const baseList = featured.length > 0 ? featured : projects;
+  // Only filter to featured projects if we are limiting the list (e.g. on the home page)
+  const baseList = typeof limit === "number" && featured.length > 0 ? featured : projects;
   const visibleProjects =
     typeof limit === "number" ? baseList.slice(0, limit) : baseList;
 

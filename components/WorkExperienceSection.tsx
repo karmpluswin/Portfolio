@@ -7,6 +7,7 @@ const WORK_EXPERIENCE: ExperienceItemType[] = [
   {
     id: "isro",
     companyName: "ISRO",
+    companyLogo: "/isro.jpg",
     positions: [
       {
         id: "sde-intern",

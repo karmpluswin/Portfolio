@@ -64,12 +64,4 @@ export const PROJECTS: Project[] = [
     description: "Coming soon.",
     featured: true,
   },
-  {
-    date: "May 2026",
-    name: "prototype",
-    github: "#",
-    live: "#",
-    description: "Prototype project — description coming soon.",
-    featured: true,
-  },
 ];

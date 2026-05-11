@@ -87,7 +87,7 @@ export default function Footer() {
               <LinkedinIcon className="size-5" />
             </a>
             <a
-              href="https://x.com/karmpluswin"
+              href="https://x.com/karmjeetchauhan"
               target="_blank"
               rel="noreferrer"
               className="text-[var(--secondary)] hover:text-[var(--hover)] transition-colors"

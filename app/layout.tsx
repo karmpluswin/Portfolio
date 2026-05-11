@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import InitialLoaderGate from "@/components/InitialLoaderGate";
 
@@ -6,9 +7,9 @@ export const metadata: Metadata = {
   title: "Karmjeet Chauhan",
   description: "Personal portfolio of Karmjeet Chauhan",
   icons: {
-    icon: "/new_logo.png",
-    shortcut: "/new_logo.png",
-    apple: "/new_logo.png",
+    icon: "/pfp.svg",
+    shortcut: "/pfp.svg",
+    apple: "/pfp.svg",
   },
 };
 
@@ -27,6 +28,7 @@ export default function RootLayout({
           }}
         />
         <InitialLoaderGate>{children}</InitialLoaderGate>
+        <Script src="/oneko.js" strategy="lazyOnload" />
       </body>
     </html>
   );

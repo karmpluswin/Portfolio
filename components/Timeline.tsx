@@ -96,10 +96,10 @@ export default function Timeline({
           {showAll ? (
             <Link
               href={showAllHref}
-              className="group inline-flex items-center gap-2 rounded-none border border-[var(--line)] bg-transparent px-2.5 py-1 text-xs font-medium text-[var(--secondary)] hover:text-[var(--text)]"
+              className="inline-flex items-center justify-center gap-1 rounded-md border border-[var(--line)] px-3 py-1.5 text-xs text-[var(--text)] hover:bg-[var(--line)]/50 transition-colors"
             >
               <span>Show all</span>
-              <ArrowUpRightIcon className="size-3 text-current" />
+              <ArrowUpRightIcon className="size-3" />
             </Link>
           ) : (
             <span aria-hidden="true" />

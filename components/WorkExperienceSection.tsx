@@ -11,7 +11,7 @@ const WORK_EXPERIENCE: ExperienceItemType[] = [
     positions: [
       {
         id: "sde-intern",
-        title: "SDE intern",
+        title: "SDE Intern",
         location: "Ahemdabad",
         employmentPeriod: {
           start: "01.2026",

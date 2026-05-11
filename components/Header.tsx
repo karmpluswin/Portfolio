@@ -46,6 +46,7 @@ function applyTheme(nextDark: boolean) {
   persistTheme(nextDark);
 }
 
+
 export default function Header() {
   const [time, setTime] = useState("");
   const [dark, setDark] = useState(false);
@@ -133,12 +134,13 @@ export default function Header() {
             height={100}
             alt="Karmjeet Chauhan"
             priority
-            className="mb-3 rounded-[6px]"
+            className="mb-3 rounded-[6px] border border-[var(--line)] p-1"
           />
           <h1
+            id="rolex-text"
             className={`${nameFont.className} text-[34px] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text)] sm:text-[38px]`}
           >
-            Rolex
+            Karmjeet Chauhan
           </h1>
         </div>
         <div className="shrink-0">

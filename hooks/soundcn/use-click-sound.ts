@@ -1,14 +1,17 @@
 "use client"
 
-import { useCallback, useRef } from "react"
+import { useCallback, useEffect, useRef } from "react"
 
 type ClickFn = () => void
 
 let sharedAudioContext: AudioContext | null = null
 
-function getAudioContext(): AudioContext | null {
+export function getAudioContext(): AudioContext | null {
   if (typeof window === "undefined") return null
-  const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+  const Ctx =
+    window.AudioContext ||
+    (window as unknown as { webkitAudioContext?: typeof AudioContext })
+      .webkitAudioContext
   if (!Ctx) return null
   if (!sharedAudioContext) sharedAudioContext = new Ctx()
   return sharedAudioContext
@@ -20,6 +23,25 @@ function getAudioContext(): AudioContext | null {
  */
 export function useClickSound(): [ClickFn] {
   const lastPlayedAtRef = useRef(0)
+
+  // One-time unlock: on first pointerdown (capture) resume the shared
+  // AudioContext so UI controls can play their first sound reliably.
+  useEffect(() => {
+    function unlock() {
+      try {
+        const ctx = getAudioContext()
+        if (ctx && ctx.state === "suspended") {
+          void ctx.resume().catch(() => {})
+        }
+      } catch {
+        // ignore
+      }
+      document.removeEventListener("pointerdown", unlock, true)
+    }
+
+    document.addEventListener("pointerdown", unlock, true)
+    return () => document.removeEventListener("pointerdown", unlock, true)
+  }, [])
 
   const click = useCallback(() => {
     const ctx = getAudioContext()

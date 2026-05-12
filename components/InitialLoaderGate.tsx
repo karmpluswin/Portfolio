@@ -11,13 +11,6 @@ type InitialLoaderGateProps = {
 
 const STORAGE_KEY = "portfolio:introSeen:v1";
 
-function prefersReducedMotion(): boolean {
-  if (typeof window === "undefined") return false;
-  return (
-    window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
-  );
-}
-
 export default function InitialLoaderGate({
   children,
 }: InitialLoaderGateProps) {
@@ -26,7 +19,6 @@ export default function InitialLoaderGate({
 
   const shouldShow = useMemo(() => {
     if (!mounted) return true; // Assume true on server to prevent blink
-    if (prefersReducedMotion()) return false;
     return showLoader;
   }, [mounted, showLoader]);
 

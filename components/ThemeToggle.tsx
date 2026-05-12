@@ -53,21 +53,10 @@ export default function ThemeToggle({ className }: { className?: string }) {
   function toggleTheme() {
     const nextDark = !dark;
     const root = document.documentElement;
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    click();
 
     // small button animation
     setAnimating(true);
     window.setTimeout(() => setAnimating(false), 350);
-
-    if (reducedMotion) {
-      setDark(nextDark);
-      applyTheme(nextDark);
-      return;
-    }
 
     const supportsViewTransition =
       "startViewTransition" in document &&
@@ -98,11 +87,16 @@ export default function ThemeToggle({ className }: { className?: string }) {
     });
   }
 
+  function handlePointerDown() {
+    click();
+  }
+
   return (
     <button
       type="button"
       aria-label={dark ? "Use light mode" : "Use dark mode"}
       aria-pressed={dark}
+      onPointerDown={handlePointerDown}
       onClick={toggleTheme}
       className={`inline-flex size-9 items-center justify-center rounded-full border border-[var(--line)] bg-transparent text-[var(--text)] ${className ?? ""}`}
     >

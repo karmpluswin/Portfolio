@@ -1,12 +1,6 @@
 // oneko.js: https://github.com/adryd325/oneko.js
 
 (function oneko() {
-  const isReducedMotion =
-    window.matchMedia(`(prefers-reduced-motion: reduce)`) === true ||
-    window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
-
-  if (isReducedMotion) return;
-
   const nekoEl = document.createElement("div");
   let persistPosition = false;
   let isSleeping = true;
@@ -14,7 +8,7 @@
 
   let nekoPosX = 150;
   let nekoPosY = 180;
-  
+
   let mousePosX = 150;
   let mousePosY = 180;
 
@@ -22,6 +16,44 @@
   let idleTime = 0;
   let idleAnimation = null;
   let idleAnimationFrame = 0;
+
+  // Audio helpers
+  let meowAudio = null;
+  let audioCtx = null;
+
+  function ensureAudio() {
+    if (typeof window === "undefined") return null;
+    if (!audioCtx) {
+      const C = window.AudioContext || window.webkitAudioContext;
+      if (!C) return null;
+      audioCtx = new C();
+    }
+    return audioCtx;
+  }
+
+  function ensureMeowAudio() {
+    if (typeof window === "undefined") return null;
+    if (!meowAudio) {
+      meowAudio = new Audio("/meow.mp3");
+      meowAudio.preload = "auto";
+      meowAudio.volume = 1;
+    }
+    return meowAudio;
+  }
+
+  function playMeow() {
+    const audio = ensureMeowAudio();
+    if (!audio) return;
+
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.volume = 1;
+      void audio.play().catch(() => {});
+    } catch (e) {
+      // ignore audio errors
+    }
+  }
 
   const nekoSpeed = 10;
   const spriteSets = {
@@ -88,19 +120,21 @@
   };
 
   function init() {
-    let nekoFile = "./oneko.gif"
-    const curScript = document.currentScript
+    let nekoFile = "./oneko.gif";
+    const curScript = document.currentScript;
     if (curScript && curScript.dataset.cat) {
-      nekoFile = curScript.dataset.cat
+      nekoFile = curScript.dataset.cat;
     }
     if (curScript && curScript.dataset.persistPosition) {
       if (curScript.dataset.persistPosition === "") {
         persistPosition = true;
       } else {
-        persistPosition = JSON.parse(curScript.dataset.persistPosition.toLowerCase());
+        persistPosition = JSON.parse(
+          curScript.dataset.persistPosition.toLowerCase(),
+        );
       }
     }
-  
+
     if (persistPosition) {
       let storedNeko = JSON.parse(window.localStorage.getItem("oneko"));
       if (storedNeko !== null) {
@@ -115,7 +149,7 @@
         nekoEl.style.backgroundPosition = storedNeko.bgPos;
       }
     }
-  
+
     nekoEl.id = "oneko";
     nekoEl.ariaHidden = true;
     nekoEl.style.width = "32px";
@@ -128,7 +162,7 @@
     nekoEl.style.zIndex = 2147483647;
 
     nekoEl.style.backgroundImage = `url(${nekoFile})`;
-    
+
     document.body.appendChild(nekoEl);
 
     // We will dynamically position it in frame() while sleeping
@@ -156,30 +190,71 @@
       }
     }
 
-    nekoEl.addEventListener("click", wakeUp);
-    nekoEl.addEventListener("touchstart", wakeUp, { passive: true });
+    // Handle any user interaction with the cat: always attempt to resume audio
+    // and play a meow so touching the cat makes a sound even if it's already awake.
+    function handleInteraction() {
+      const ac = ensureAudio();
+      if (ac && ac.state === "suspended") {
+        void ac
+          .resume()
+          .catch(() => {})
+          .finally(() => {
+            // Wake up if sleeping, then always play a meow as feedback to the user.
+            wakeUp();
+            playMeow();
+          });
+        return;
+      }
+
+      // Wake up if sleeping, then always play a meow as feedback to the user.
+      wakeUp();
+      playMeow();
+    }
+
+    nekoEl.addEventListener("click", handleInteraction);
+    nekoEl.addEventListener("touchstart", handleInteraction, { passive: true });
+
+    // One-time page-level audio unlock: run early on first pointerdown (capture)
+    // so other UI elements (theme toggle) can play on their first click.
+    function unlockAudioOnFirstGesture() {
+      const ac = ensureAudio();
+      if (ac && ac.state === "suspended") {
+        // resume our audio context; this handler runs in capture phase so it
+        // will run before other handlers on the same gesture.
+        ac.resume().catch(() => {});
+      }
+      document.removeEventListener(
+        "pointerdown",
+        unlockAudioOnFirstGesture,
+        true,
+      );
+    }
+    document.addEventListener("pointerdown", unlockAudioOnFirstGesture, true);
 
     document.addEventListener("mousemove", function (event) {
       mousePosX = event.clientX;
       mousePosY = event.clientY;
     });
-    
+
     if (persistPosition) {
       window.addEventListener("beforeunload", function (event) {
-        window.localStorage.setItem("oneko", JSON.stringify({
-          nekoPosX: nekoPosX,
-          nekoPosY: nekoPosY,
-          mousePosX: mousePosX,
-          mousePosY: mousePosY,
-          frameCount: frameCount,
-          idleTime: idleTime,
-          idleAnimation: idleAnimation,
-          idleAnimationFrame: idleAnimationFrame,
-          bgPos: nekoEl.style.backgroundPosition
-        }));
+        window.localStorage.setItem(
+          "oneko",
+          JSON.stringify({
+            nekoPosX: nekoPosX,
+            nekoPosY: nekoPosY,
+            mousePosX: mousePosX,
+            mousePosY: mousePosY,
+            frameCount: frameCount,
+            idleTime: idleTime,
+            idleAnimation: idleAnimation,
+            idleAnimationFrame: idleAnimationFrame,
+            bgPos: nekoEl.style.backgroundPosition,
+          }),
+        );
       });
     }
-    
+
     window.requestAnimationFrame(onAnimationFrame);
   }
 
@@ -276,7 +351,7 @@
 
   function frame() {
     frameCount += 1;
-    
+
     const rolexText = document.getElementById("rolex-text");
     const isRolexTextPresent = !!rolexText;
 

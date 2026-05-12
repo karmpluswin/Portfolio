@@ -30,7 +30,13 @@ export default function ProjectsPage() {
 
         <div className="my-6 h-px w-full bg-[var(--line)]" />
 
-        <Timeline showHeader={false} showAll={false} />
+        <Timeline
+          showHeader={false}
+          showAll={false}
+          showImages
+          showProjectDividers
+          alwaysShowDescription
+        />
 
         <div className="mt-auto pt-10">
           <Footer />

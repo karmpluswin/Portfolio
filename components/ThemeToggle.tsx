@@ -1,7 +1,7 @@
 "use client";
 
 import { MoonIcon, SunMediumIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useClickSound } from "@/hooks/soundcn/use-click-sound";
 
 const THEME_STORAGE_KEY = "portfolio:theme";
@@ -28,6 +28,7 @@ function applyTheme(nextDark: boolean) {
 export default function ThemeToggle({ className }: { className?: string }) {
   const [dark, setDark] = useState(false);
   const [animating, setAnimating] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [click] = useClickSound();
 
   useEffect(() => {
@@ -54,9 +55,39 @@ export default function ThemeToggle({ className }: { className?: string }) {
     const nextDark = !dark;
     const root = document.documentElement;
 
-    // small button animation
-    setAnimating(true);
-    window.setTimeout(() => setAnimating(false), 350);
+    const button = buttonRef.current;
+    if (button) {
+      setAnimating(true);
+      const animation = button.animate(
+        [
+          {
+            transform: "scale(1) rotate(0deg)",
+            boxShadow: "0 0 0 0 rgba(96, 165, 250, 0)",
+          },
+          {
+            transform: "scale(0.9) rotate(-8deg)",
+            boxShadow: "0 0 0 8px rgba(96, 165, 250, 0.16)",
+          },
+          {
+            transform: "scale(1.14) rotate(10deg)",
+            boxShadow: "0 0 0 14px rgba(96, 165, 250, 0.08)",
+          },
+          {
+            transform: "scale(1) rotate(0deg)",
+            boxShadow: "0 0 0 0 rgba(96, 165, 250, 0)",
+          },
+        ],
+        {
+          duration: 420,
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          fill: "both",
+        },
+      );
+
+      animation.onfinish = () => setAnimating(false);
+      animation.oncancel = () => setAnimating(false);
+      window.setTimeout(() => setAnimating(false), 500);
+    }
 
     const supportsViewTransition =
       "startViewTransition" in document &&
@@ -98,7 +129,7 @@ export default function ThemeToggle({ className }: { className?: string }) {
       aria-pressed={dark}
       onPointerDown={handlePointerDown}
       onClick={toggleTheme}
-      data-animating={animating ? "true" : "false"}
+      ref={buttonRef}
       className={`theme-toggle-button inline-flex size-9 items-center justify-center rounded-full border border-[var(--line)] bg-transparent text-[var(--text)] ${className ?? ""}`}
     >
       <span

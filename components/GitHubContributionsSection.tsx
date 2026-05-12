@@ -25,7 +25,7 @@ export default function GitHubContributionsSection() {
           </h2>
         </div>
       </div>
-      <div className="rounded border border-[var(--line)] p-4 shadow-none transition-colors duration-500 hover:border-white/20 animate-fade-in">
+      <div className="rounded border border-[var(--line)] p-4 shadow-none transition-all duration-300 hover:border-[var(--text)]/20 hover:shadow-[0_0_16px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_16px_rgba(255,255,255,0.08)] animate-fade-in">
         <Suspense fallback={<GitHubContributionsFallback />}>
           <GitHubContributions
             contributions={contributions}

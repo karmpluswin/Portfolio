@@ -1,10 +1,9 @@
 "use client";
 
-import { MoonIcon, SunMediumIcon } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-import { useClickSound } from "@/hooks/soundcn/use-click-sound";
+import ThemeToggle from "@/components/ThemeToggle";
 import { nameFont } from "@/app/fonts";
 
 const links = [
@@ -46,12 +45,8 @@ function applyTheme(nextDark: boolean) {
   persistTheme(nextDark);
 }
 
-
 export default function Header() {
   const [time, setTime] = useState("");
-  const [dark, setDark] = useState(false);
-
-  const [click] = useClickSound();
 
   useEffect(() => {
     setTime(getISTTime());
@@ -76,53 +71,8 @@ export default function Header() {
       // ignore
     }
 
-    setDark(nextDark);
     applyTheme(nextDark);
   }, []);
-
-  function toggleTheme() {
-    const nextDark = !dark;
-    const root = document.documentElement;
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    click();
-
-    if (reducedMotion) {
-      setDark(nextDark);
-      applyTheme(nextDark);
-      return;
-    }
-
-    const supportsViewTransition =
-      "startViewTransition" in document &&
-      typeof (document as unknown as { startViewTransition?: unknown })
-        .startViewTransition === "function";
-
-    if (!supportsViewTransition) {
-      setDark(nextDark);
-      applyTheme(nextDark);
-      return;
-    }
-
-    root.classList.add("theme-revealing");
-
-    const transition = (
-      document as unknown as {
-        startViewTransition: (callback: () => void) => {
-          finished: Promise<void>;
-        };
-      }
-    ).startViewTransition(() => {
-      setDark(nextDark);
-      applyTheme(nextDark);
-    });
-
-    transition.finished.finally(() => {
-      root.classList.remove("theme-revealing");
-    });
-  }
 
   return (
     <header className="relative space-y-4">
@@ -144,24 +94,15 @@ export default function Header() {
           </h1>
         </div>
         <div className="shrink-0">
-          <button
-            type="button"
-            aria-label={dark ? "Use light mode" : "Use dark mode"}
-            aria-pressed={dark}
-            onClick={toggleTheme}
-            className="inline-flex size-9 items-center justify-center rounded-full border border-[var(--line)] bg-transparent text-[var(--text)]"
-          >
-            <MoonIcon className="hidden size-4 [html.dark_&]:block" />
-            <SunMediumIcon className="hidden size-4 [html.light_&]:block" />
-          </button>
+          <ThemeToggle />
         </div>
       </div>
 
       <div className="grid grid-cols-[1fr_auto] items-start gap-x-5 gap-y-1">
         <p className="min-w-0 text-[var(--text)]">
-          Curious Mind. Born in 2004. India.
+          Software Engineer. Born in 2004. India.
         </p>
-        <time className="shrink-0 whitespace-nowrap text-right tabular-nums text-[var(--text)]">
+        <time className="shrink-0 whitespace-nowrap text-right tabular-nums text-[var(--text)] hidden md:block">
           {time}
         </time>
       </div>

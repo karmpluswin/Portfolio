@@ -23,6 +23,7 @@ import {
   useMemo,
   useRef,
   forwardRef,
+  useState,
 } from "react";
 import { format } from "date-fns";
 
@@ -82,6 +83,7 @@ const THEME = cn(
   'data-[level="2"]:fill-[var(--secondary)] opacity-80',
   'data-[level="3"]:fill-[var(--text)] opacity-60',
   'data-[level="4"]:fill-[var(--text)]',
+  "hover:opacity-100 transition-opacity duration-150 cursor-pointer",
 );
 
 type ContributionGraphContextType = {
@@ -99,6 +101,10 @@ type ContributionGraphContextType = {
   year: number;
   width: number;
   height: number;
+  hoveredActivity: Activity | null;
+  setHoveredActivity: (activity: Activity | null) => void;
+  tooltipPos: { x: number; y: number } | null;
+  setTooltipPos: (pos: { x: number; y: number } | null) => void;
 };
 
 const ContributionGraphContext =
@@ -268,6 +274,11 @@ export const ContributionGraph = ({
   const weeks = useMemo(() => groupByWeeks(data, weekStart), [data, weekStart]);
   const LABEL_MARGIN = 8;
 
+  const [hoveredActivity, setHoveredActivity] = useState<Activity | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(
+    null,
+  );
+
   const labels = { ...DEFAULT_LABELS, ...labelsProp };
   const labelHeight = fontSize + LABEL_MARGIN;
 
@@ -305,10 +316,17 @@ export const ContributionGraph = ({
         year,
         width,
         height,
+        hoveredActivity,
+        setHoveredActivity,
+        tooltipPos,
+        setTooltipPos,
       }}
     >
       <div
-        className={cn("flex w-max max-w-full flex-col gap-2", className)}
+        className={cn(
+          "flex w-max max-w-full flex-col gap-2 relative",
+          className,
+        )}
         style={{ fontSize, ...style }}
         {...props}
       />
@@ -322,37 +340,83 @@ export type ContributionGraphBlockProps = HTMLAttributes<SVGRectElement> & {
   weekIndex: number;
 };
 
-export const ContributionGraphBlock = forwardRef<SVGRectElement, ContributionGraphBlockProps>(
-  ({ activity, dayIndex, weekIndex, className, ...props }, ref) => {
-    const { blockSize, blockMargin, blockRadius, labelHeight, maxLevel } =
-      useContributionGraph();
+export const ContributionGraphBlock = forwardRef<
+  SVGRectElement,
+  ContributionGraphBlockProps
+>(({ activity, dayIndex, weekIndex, className, ...props }, ref) => {
+  const {
+    blockSize,
+    blockMargin,
+    blockRadius,
+    labelHeight,
+    maxLevel,
+    setHoveredActivity,
+    setTooltipPos,
+  } = useContributionGraph();
 
-    if (activity.level < 0 || activity.level > maxLevel) {
-      throw new RangeError(
-        `Provided activity level ${activity.level} for ${activity.date} is out of range. It must be between 0 and ${maxLevel}.`,
-      );
-    }
+  const internalRef = useRef<SVGRectElement>(null);
 
-    return (
-      <rect
-        ref={ref}
-        className={cn(THEME, className)}
-        data-count={activity.count}
-        data-date={activity.date}
-        data-level={activity.level}
-        height={blockSize}
-        rx={blockRadius}
-        ry={blockRadius}
-        width={blockSize}
-        x={(blockSize + blockMargin) * weekIndex}
-        y={labelHeight + (blockSize + blockMargin) * dayIndex}
-        {...props}
-      >
-        <title>{`${activity.count} contribution${activity.count !== 1 ? "s" : ""}`}</title>
-      </rect>
+  if (activity.level < 0 || activity.level > maxLevel) {
+    throw new RangeError(
+      `Provided activity level ${activity.level} for ${activity.date} is out of range. It must be between 0 and ${maxLevel}.`,
     );
-  },
-);
+  }
+
+  useEffect(() => {
+    const element = internalRef.current;
+    if (!element) return;
+
+    const handleMouseEnter = () => {
+      setHoveredActivity(activity);
+      const rect = element.getBoundingClientRect();
+      setTooltipPos({
+        x: rect.left + rect.width / 2,
+        y: rect.top - 10,
+      });
+    };
+
+    const handleMouseLeave = () => {
+      setHoveredActivity(null);
+      setTooltipPos(null);
+    };
+
+    element.addEventListener("mouseenter", handleMouseEnter);
+    element.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      element.removeEventListener("mouseenter", handleMouseEnter);
+      element.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, [activity, setHoveredActivity, setTooltipPos]);
+
+  return (
+    <rect
+      ref={(node) => {
+        internalRef.current = node;
+        if (typeof ref === "function") {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+      }}
+      className={cn(
+        THEME,
+        className,
+        "group hover:filter hover:[filter:url(#contribution-glow)]",
+      )}
+      data-count={activity.count}
+      data-date={activity.date}
+      data-level={activity.level}
+      height={blockSize}
+      rx={blockRadius}
+      ry={blockRadius}
+      width={blockSize}
+      x={(blockSize + blockMargin) * weekIndex}
+      y={labelHeight + (blockSize + blockMargin) * dayIndex}
+      {...props}
+    ></rect>
+  );
+});
 ContributionGraphBlock.displayName = "ContributionGraphBlock";
 
 export type ContributionGraphCalendarProps = Omit<
@@ -404,6 +468,21 @@ export const ContributionGraphCalendar = ({
         viewBox={`0 0 ${width} ${height}`}
         width={width}
       >
+        <defs>
+          <filter
+            id="contribution-glow"
+            x="-50%"
+            y="-50%"
+            width="200%"
+            height="200%"
+          >
+            <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
         {!hideMonthLabels && (
           <g className="fill-current selection:fill-selection-foreground">
             {monthLabels.map(({ label, weekIndex }) => (
@@ -431,6 +510,7 @@ export const ContributionGraphCalendar = ({
           }),
         )}
       </svg>
+      <ContributionGraphTooltip />
     </div>
   );
 };
@@ -475,6 +555,32 @@ export const ContributionGraphTotalCount = ({
             .replace("{{count}}", String(totalCount))
             .replace("{{year}}", String(year))
         : `${totalCount} activities in ${year}`}
+    </div>
+  );
+};
+
+const ContributionGraphTooltip = () => {
+  const { hoveredActivity, tooltipPos } = useContributionGraph();
+
+  if (!hoveredActivity || !tooltipPos) {
+    return null;
+  }
+
+  const dateFormatted = format(parseISO(hoveredActivity.date), "MMM d, yyyy");
+  const count = hoveredActivity.count;
+  const text = `${count} contribution${count !== 1 ? "s" : ""} on ${dateFormatted}`;
+
+  return (
+    <div
+      className="fixed pointer-events-none z-50 -translate-x-1/2 -translate-y-full -mt-2"
+      style={{
+        left: `${tooltipPos.x}px`,
+        top: `${tooltipPos.y}px`,
+      }}
+    >
+      <div className="bg-[var(--text)] text-[var(--background)] text-sm px-3 py-1.5 rounded whitespace-nowrap shadow-lg">
+        {text}
+      </div>
     </div>
   );
 };

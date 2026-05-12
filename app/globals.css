@@ -162,6 +162,29 @@ button {
   touch-action: manipulation;
 }
 
+.theme-toggle-button {
+  transform: translateZ(0);
+}
+
+.theme-toggle-button[data-animating="true"] {
+  animation: theme-toggle-pop 360ms var(--expo-out);
+}
+
+@keyframes theme-toggle-pop {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  35% {
+    transform: scale(0.88) rotate(-10deg);
+  }
+  70% {
+    transform: scale(1.12) rotate(12deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
 /* Theme toggle effect: Circle blur (top-right) using View Transitions API */
 ::view-transition-group(root) {
   animation-timing-function: var(--expo-out);
@@ -201,7 +224,7 @@ html.theme-revealing
     aside,
     nav,
     div,
-    button,
+    button:not(.theme-toggle-button),
     input,
     textarea,
     select

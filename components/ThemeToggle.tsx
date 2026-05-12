@@ -98,7 +98,8 @@ export default function ThemeToggle({ className }: { className?: string }) {
       aria-pressed={dark}
       onPointerDown={handlePointerDown}
       onClick={toggleTheme}
-      className={`inline-flex size-9 items-center justify-center rounded-full border border-[var(--line)] bg-transparent text-[var(--text)] ${className ?? ""}`}
+      data-animating={animating ? "true" : "false"}
+      className={`theme-toggle-button inline-flex size-9 items-center justify-center rounded-full border border-[var(--line)] bg-transparent text-[var(--text)] ${className ?? ""}`}
     >
       <span
         className={`inline-flex items-center justify-center transition-all duration-300 ease-out ${

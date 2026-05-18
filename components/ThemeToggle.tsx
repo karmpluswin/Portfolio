@@ -25,11 +25,108 @@ function applyTheme(nextDark: boolean) {
   persistTheme(nextDark);
 }
 
+function copyThemeVariables(source: CSSStyleDeclaration, target: HTMLElement) {
+  [
+    "--background",
+    "--text",
+    "--secondary",
+    "--line",
+    "--hover",
+    "--theme-duration",
+    "--expo-out",
+  ].forEach((name) => {
+    target.style.setProperty(name, source.getPropertyValue(name));
+  });
+}
+
+function runFallbackCurtain(nextDark: boolean, onComplete: () => void) {
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (prefersReducedMotion) {
+    applyTheme(nextDark);
+    onComplete();
+    return;
+  }
+
+  const rootStyle = window.getComputedStyle(document.documentElement);
+  const bodyStyle = window.getComputedStyle(document.body);
+  const scrollY = window.scrollY;
+  const overlay = document.createElement("div");
+  const snapshot = document.createElement("div");
+
+  overlay.setAttribute("aria-hidden", "true");
+  overlay.setAttribute("data-theme-curtain", "true");
+  overlay.style.position = "fixed";
+  overlay.style.inset = "0";
+  overlay.style.zIndex = "2147483647";
+  overlay.style.pointerEvents = "none";
+  overlay.style.overflow = "hidden";
+  overlay.style.background = rootStyle.getPropertyValue("--background");
+  overlay.style.color = rootStyle.getPropertyValue("--text");
+  overlay.style.clipPath = "inset(0 0 0 0)";
+  overlay.style.maskImage =
+    "linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, 0.72) 28px, #000 56px, #000 100%)";
+  overlay.style.willChange = "clip-path";
+
+  copyThemeVariables(rootStyle, overlay);
+
+  snapshot.style.position = "absolute";
+  snapshot.style.top = `${-scrollY}px`;
+  snapshot.style.left = "0";
+  snapshot.style.right = "0";
+  snapshot.style.minHeight = `${document.documentElement.scrollHeight}px`;
+  snapshot.style.background = rootStyle.getPropertyValue("--background");
+  snapshot.style.color = rootStyle.getPropertyValue("--text");
+  snapshot.style.font = bodyStyle.font;
+  snapshot.style.letterSpacing = bodyStyle.letterSpacing;
+  snapshot.style.lineHeight = bodyStyle.lineHeight;
+
+  Array.from(document.body.children).forEach((child) => {
+    if (child.hasAttribute("data-theme-curtain")) return;
+    snapshot.appendChild(child.cloneNode(true));
+  });
+
+  overlay.appendChild(snapshot);
+  document.body.appendChild(overlay);
+
+  applyTheme(nextDark);
+
+  const durationRaw = window
+    .getComputedStyle(document.documentElement)
+    .getPropertyValue("--theme-curtain-duration")
+    .trim();
+  const duration = Number.isFinite(Number.parseFloat(durationRaw))
+    ? Number.parseFloat(durationRaw)
+    : 980;
+  const animation = overlay.animate(
+    [{ clipPath: "inset(0 0 0 0)" }, { clipPath: "inset(100% 0 0 0)" }],
+    {
+      duration,
+      easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+      fill: "forwards",
+    },
+  );
+
+  let cleanedUp = false;
+  const cleanup = () => {
+    if (cleanedUp) return;
+    cleanedUp = true;
+    onComplete();
+    overlay.remove();
+  };
+
+  animation.finished.then(cleanup, cleanup);
+  window.setTimeout(cleanup, duration + 240);
+}
+
 export default function ThemeToggle({ className }: { className?: string }) {
   const [dark, setDark] = useState(false);
   const [animating, setAnimating] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const revealingRef = useRef(false);
   const [click] = useClickSound();
 
   useEffect(() => {
@@ -53,8 +150,11 @@ export default function ThemeToggle({ className }: { className?: string }) {
   }, []);
 
   function toggleTheme() {
+    if (revealingRef.current) return;
+
     const nextDark = !dark;
     const root = document.documentElement;
+    revealingRef.current = true;
 
     if (buttonRef.current) {
       setAnimating(true);
@@ -74,30 +174,44 @@ export default function ThemeToggle({ className }: { className?: string }) {
         .startViewTransition === "function";
 
     if (!supportsViewTransition) {
-      setDark(nextDark);
-      applyTheme(nextDark);
+      root.classList.add("theme-revealing");
+      runFallbackCurtain(nextDark, () => {
+        setDark(nextDark);
+        revealingRef.current = false;
+        root.classList.remove("theme-revealing");
+      });
       return;
     }
 
     root.classList.add("theme-revealing");
 
-    const transition = (
-      document as unknown as {
-        startViewTransition: (callback: () => void) => {
-          finished: Promise<void>;
-        };
-      }
-    ).startViewTransition(() => {
-      setDark(nextDark);
-      applyTheme(nextDark);
-    });
+    try {
+      const transition = (
+        document as unknown as {
+          startViewTransition: (callback: () => void) => {
+            finished: Promise<void>;
+          };
+        }
+      ).startViewTransition(() => {
+        setDark(nextDark);
+        applyTheme(nextDark);
+      });
 
-    transition.finished.finally(() => {
-      root.classList.remove("theme-revealing");
-    });
+      transition.finished.finally(() => {
+        revealingRef.current = false;
+        root.classList.remove("theme-revealing");
+      });
+    } catch {
+      runFallbackCurtain(nextDark, () => {
+        setDark(nextDark);
+        revealingRef.current = false;
+        root.classList.remove("theme-revealing");
+      });
+    }
   }
 
   function handlePointerDown() {
+    if (revealingRef.current) return;
     click();
   }
 
@@ -106,6 +220,8 @@ export default function ThemeToggle({ className }: { className?: string }) {
       if (animationTimeoutRef.current) {
         clearTimeout(animationTimeoutRef.current);
       }
+      document.documentElement.classList.remove("theme-revealing");
+      revealingRef.current = false;
     };
   }, []);
 

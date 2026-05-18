@@ -40,6 +40,7 @@
   --line: #e5e5e5;
   --hover: #3b82f6;
   --theme-duration: 520ms;
+  --theme-curtain-duration: 1500ms;
   --expo-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -59,6 +60,11 @@ html.dark {
 html,
 body {
   min-height: 100%;
+}
+
+html {
+  /* Ensure the whole document participates in View Transitions. */
+  view-transition-name: root;
 }
 
 body {
@@ -168,31 +174,101 @@ button {
   }
 }
 
-/* Theme toggle effect: Circle blur (top-right) using View Transitions API */
+/* Theme toggle effect: smooth top-to-bottom repaint using View Transitions API */
 ::view-transition-group(root) {
+  animation-duration: var(--theme-curtain-duration);
   animation-timing-function: var(--expo-out);
 }
 
-::view-transition-new(root) {
-  mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><defs><filter id="blur"><feGaussianBlur stdDeviation="2"/></filter></defs><circle cx="40" cy="0" r="18" fill="white" filter="url(%23blur)"/></svg>')
-    top right / 0 no-repeat;
-  mask-origin: content-box;
-  animation: theme-circle-blur-scale 1s;
-  animation-fill-mode: both;
-  transform-origin: top right;
+::view-transition-image-pair(root) {
+  isolation: isolate;
 }
 
 ::view-transition-old(root),
-.dark::view-transition-old(root) {
-  animation: theme-circle-blur-scale 1s;
-  animation-fill-mode: both;
-  transform-origin: top right;
-  z-index: -1;
+::view-transition-new(root) {
+  pointer-events: none;
+  /* Avoid any transform/GPU rasterization hints which can look like shifting. */
+  transform: none;
 }
 
-@keyframes theme-circle-blur-scale {
+/*
+  Premium top→bottom “repaint”:
+  - We reveal the new snapshot using a moving mask.
+  - The old snapshot is masked out in the complementary region.
+  - The feathered edge (soft gradient) travels with the reveal line.
+*/
+::view-transition-new(root) {
+  z-index: 1;
+  filter: saturate(1.02);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 50%,
+    rgb(0 0 0 / 0.45) 51.5%,
+    transparent 53%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 50%,
+    rgb(0 0 0 / 0.45) 51.5%,
+    transparent 53%,
+    transparent 100%
+  );
+  -webkit-mask-size: 100% 200%;
+  mask-size: 100% 200%;
+  -webkit-mask-position: 0 100%;
+  mask-position: 0 100%;
+  animation: theme-curtain-new var(--theme-curtain-duration) var(--expo-out)
+    both;
+}
+
+::view-transition-old(root) {
+  z-index: 0;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 47%,
+    rgb(0 0 0 / 0.55) 48.5%,
+    #000 50%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 47%,
+    rgb(0 0 0 / 0.55) 48.5%,
+    #000 50%,
+    #000 100%
+  );
+  -webkit-mask-size: 100% 200%;
+  mask-size: 100% 200%;
+  -webkit-mask-position: 0 100%;
+  mask-position: 0 100%;
+  animation: theme-curtain-old var(--theme-curtain-duration) var(--expo-out)
+    both;
+}
+
+@keyframes theme-curtain-new {
+  from {
+    -webkit-mask-position: 0 100%;
+    mask-position: 0 100%;
+  }
   to {
-    mask-size: 350vmax;
+    -webkit-mask-position: 0 0%;
+    mask-position: 0 0%;
+  }
+}
+
+@keyframes theme-curtain-old {
+  from {
+    -webkit-mask-position: 0 100%;
+    mask-position: 0 100%;
+  }
+  to {
+    -webkit-mask-position: 0 0%;
+    mask-position: 0 0%;
   }
 }
 

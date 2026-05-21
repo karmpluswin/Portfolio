@@ -34,23 +34,23 @@
 
 :root {
   color-scheme: light;
-  --background: #ffffff;
-  --text: #000000;
-  --secondary: #666666;
-  --line: #e5e5e5;
-  --hover: #3b82f6;
-  --theme-duration: 520ms;
-  --theme-curtain-duration: 1500ms;
-  --expo-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --color-bg: #ffffff;
+  --color-text: #111111;
+  --color-muted: #666666;
+  --color-border: #e5e5e5;
+  --color-surface: #f7f7f7;
+  --color-link-hover: #2563eb;
+  --theme-transition: 180ms ease;
 }
 
 html.dark {
   color-scheme: dark;
-  --background: #000000;
-  --text: #ffffff;
-  --secondary: #aaaaaa;
-  --line: #262626;
-  --hover: #60a5fa;
+  --color-bg: #000000;
+  --color-text: #f5f5f5;
+  --color-muted: #a3a3a3;
+  --color-border: #262626;
+  --color-surface: #111111;
+  --color-link-hover: #60a5fa;
 }
 
 * {
@@ -62,15 +62,10 @@ body {
   min-height: 100%;
 }
 
-html {
-  /* Ensure the whole document participates in View Transitions. */
-  view-transition-name: root;
-}
-
 body {
   margin: 0;
-  background: var(--background);
-  color: var(--text);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-family:
     "ABC Diatype Mono Digits", "Diatype Semi Mono", "ABC Diatype Semi-Mono",
     "SF Mono", "SFMono-Regular", ui-monospace, Menlo, Monaco, "Cascadia Mono",
@@ -82,6 +77,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: geometricPrecision;
+  transition:
+    background-color var(--theme-transition),
+    color var(--theme-transition);
 }
 
 @media (min-width: 640px) {
@@ -91,7 +89,6 @@ body {
 }
 
 :where(
-  body,
   header,
   main,
   footer,
@@ -103,12 +100,14 @@ body {
   button,
   input,
   textarea,
-  select
+  select,
+  a,
+  svg
 ) {
   transition-property:
     color, background-color, border-color, outline-color, box-shadow, fill,
     stroke;
-  transition-duration: var(--theme-duration);
+  transition-duration: 180ms;
   transition-timing-function: ease;
 }
 
@@ -126,7 +125,9 @@ body {
     button,
     input,
     textarea,
-    select
+    select,
+    a,
+    svg
   ) {
     transition-duration: 0ms;
   }
@@ -141,7 +142,7 @@ a {
 }
 
 a:hover {
-  color: var(--hover);
+  color: var(--color-link-hover);
 }
 
 button {
@@ -151,166 +152,9 @@ button {
   touch-action: manipulation;
 }
 
-.theme-toggle-button {
-  transform: translateZ(0);
-}
-
-.theme-toggle-button[data-animating="true"] {
-  animation: theme-toggle-pop 360ms var(--expo-out);
-}
-
-@keyframes theme-toggle-pop {
-  0% {
-    transform: scale(1) rotate(0deg);
-  }
-  35% {
-    transform: scale(0.88) rotate(-10deg);
-  }
-  70% {
-    transform: scale(1.12) rotate(12deg);
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-  }
-}
-
-/* Theme toggle effect: smooth top-to-bottom repaint using View Transitions API */
-::view-transition-group(root) {
-  animation-duration: var(--theme-curtain-duration);
-  animation-timing-function: var(--expo-out);
-}
-
-::view-transition-image-pair(root) {
-  isolation: isolate;
-}
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  pointer-events: none;
-  /* Avoid any transform/GPU rasterization hints which can look like shifting. */
-  transform: none;
-}
-
-/*
-  Premium top→bottom “repaint”:
-  - We reveal the new snapshot using a moving mask.
-  - The old snapshot is masked out in the complementary region.
-  - The feathered edge (soft gradient) travels with the reveal line.
-*/
-::view-transition-new(root) {
-  z-index: 1;
-  filter: saturate(1.02);
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    #000 0%,
-    #000 50%,
-    rgb(0 0 0 / 0.45) 51.5%,
-    transparent 53%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    #000 0%,
-    #000 50%,
-    rgb(0 0 0 / 0.45) 51.5%,
-    transparent 53%,
-    transparent 100%
-  );
-  -webkit-mask-size: 100% 200%;
-  mask-size: 100% 200%;
-  -webkit-mask-position: 0 100%;
-  mask-position: 0 100%;
-  animation: theme-curtain-new var(--theme-curtain-duration) var(--expo-out)
-    both;
-}
-
-::view-transition-old(root) {
-  z-index: 0;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    transparent 47%,
-    rgb(0 0 0 / 0.55) 48.5%,
-    #000 50%,
-    #000 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    transparent 47%,
-    rgb(0 0 0 / 0.55) 48.5%,
-    #000 50%,
-    #000 100%
-  );
-  -webkit-mask-size: 100% 200%;
-  mask-size: 100% 200%;
-  -webkit-mask-position: 0 100%;
-  mask-position: 0 100%;
-  animation: theme-curtain-old var(--theme-curtain-duration) var(--expo-out)
-    both;
-}
-
-@keyframes theme-curtain-new {
-  from {
-    -webkit-mask-position: 0 100%;
-    mask-position: 0 100%;
-  }
-  to {
-    -webkit-mask-position: 0 0%;
-    mask-position: 0 0%;
-  }
-}
-
-@keyframes theme-curtain-old {
-  from {
-    -webkit-mask-position: 0 100%;
-    mask-position: 0 100%;
-  }
-  to {
-    -webkit-mask-position: 0 0%;
-    mask-position: 0 0%;
-  }
-}
-
-html.theme-revealing
-  :where(
-    body,
-    header,
-    main,
-    footer,
-    section,
-    article,
-    aside,
-    nav,
-    div,
-    button:not(.theme-toggle-button),
-    input,
-    textarea,
-    select
-  ) {
-  transition-duration: 0ms;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-  }
-}
-
-/* While the `initial-loading` class is present on <html>, hide all body
-   children except the loader element (which has the data-initial-loader
-   attribute). This prevents the main page flashing before the loader runs. */
 html.initial-loading body > *:not([data-initial-loader]) {
   visibility: hidden;
-  font-display: swap;
-  src:
-    local("ABC Diatype Mono"),
-    url("/fonts/ABC%20Diatype%20Mono.woff") format("woff");
-  unicode-range: U+0030-0039, U+003A, U+002F, U+002D;
 }
-
-/* Deduplicated block removed */
 
 @utility link-underline {
   @apply underline decoration-current/30 decoration-1 underline-offset-3 transition-colors hover:decoration-current;
@@ -330,9 +174,10 @@ html.initial-loading body > *:not([data-initial-loader]) {
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
+
 .no-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none;
 }

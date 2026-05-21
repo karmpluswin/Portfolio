@@ -25,10 +25,10 @@ export default function RootLayout({
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
-            __html: `(()=>{try{var t=localStorage.getItem('portfolio:theme');var d=t? t==='dark' : (window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);var r=document.documentElement;r.classList.toggle('dark',!!d);r.classList.toggle('light',!d);}catch(e){} })();`,
+            __html: `(()=>{try{var key='portfolio-color-theme';var t=localStorage.getItem(key);var theme=(t==='dark'||t==='light')?t:((window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');var r=document.documentElement;r.classList.toggle('dark',theme==='dark');r.classList.toggle('light',theme==='light');r.style.colorScheme=theme;}catch(e){}})();`,
           }}
         />
-        <MotionConfig reducedMotion="never">
+        <MotionConfig reducedMotion="user">
           <InitialLoaderGate>{children}</InitialLoaderGate>
         </MotionConfig>
         <Script src="/oneko.js" strategy="lazyOnload" />

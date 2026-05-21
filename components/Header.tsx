@@ -12,8 +12,6 @@ const links = [
   { label: "Linkedin", href: "https://linkedin.com/in/karmjeetchauhan" },
 ];
 
-const THEME_STORAGE_KEY = "portfolio:theme";
-
 function getISTTime() {
   return new Intl.DateTimeFormat("en-IN", {
     timeZone: "Asia/Kolkata",
@@ -26,25 +24,6 @@ function getISTTime() {
     .toUpperCase();
 }
 
-function updateTheme(nextDark: boolean) {
-  const root = document.documentElement;
-  root.classList.toggle("dark", nextDark);
-  root.classList.toggle("light", !nextDark);
-}
-
-function persistTheme(nextDark: boolean) {
-  try {
-    window.localStorage.setItem(THEME_STORAGE_KEY, nextDark ? "dark" : "light");
-  } catch {
-    // ignore
-  }
-}
-
-function applyTheme(nextDark: boolean) {
-  updateTheme(nextDark);
-  persistTheme(nextDark);
-}
-
 export default function Header() {
   const [time, setTime] = useState("");
 
@@ -52,26 +31,6 @@ export default function Header() {
     setTime(getISTTime());
     const timer = window.setInterval(() => setTime(getISTTime()), 1000);
     return () => window.clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    // Initialize theme from localStorage, otherwise fall back to system preference.
-    let nextDark = document.documentElement.classList.contains("dark");
-
-    try {
-      const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-      if (stored === "dark") nextDark = true;
-      else if (stored === "light") nextDark = false;
-      else {
-        nextDark =
-          window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ??
-          nextDark;
-      }
-    } catch {
-      // ignore
-    }
-
-    applyTheme(nextDark);
   }, []);
 
   return (
@@ -84,11 +43,11 @@ export default function Header() {
             height={100}
             alt="Karmjeet Chauhan"
             priority
-            className="mb-3 rounded-[6px] border border-[var(--line)]"
+            className="mb-3 rounded-[6px] border border-[var(--color-border)]"
           />
           <h1
             id="rolex-text"
-            className={`${nameFont.className} text-[34px] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text)] sm:text-[38px]`}
+            className={`${nameFont.className} text-[34px] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--color-text)] sm:text-[38px]`}
           >
             Karmjeet Chauhan
           </h1>
@@ -99,11 +58,11 @@ export default function Header() {
       </div>
 
       <div className="grid grid-cols-[1fr_auto] items-start gap-x-5 gap-y-1">
-        <p className="min-w-0 text-[var(--text)]">
+        <p className="min-w-0 text-[var(--color-text)]">
           Think Different. Born in 2004. India.
           {/* Software Engineer. Born in 2004. India. */}
         </p>
-        <time className="shrink-0 whitespace-nowrap text-right tabular-nums text-[var(--text)] hidden md:block">
+        <time className="shrink-0 whitespace-nowrap text-right tabular-nums text-[var(--color-text)] hidden md:block">
           {time}
         </time>
       </div>

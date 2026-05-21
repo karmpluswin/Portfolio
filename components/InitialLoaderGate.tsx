@@ -68,7 +68,7 @@ export default function InitialLoaderGate({
           <motion.div
             data-initial-loader
             className="fixed inset-0 z-50 flex items-center justify-center"
-            style={{ background: "var(--background)", color: "var(--text)" }}
+            style={{ background: "var(--color-bg)", color: "var(--color-text)" }}
             initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

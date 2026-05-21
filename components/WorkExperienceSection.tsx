@@ -36,7 +36,7 @@ const WORK_EXPERIENCE: ExperienceItemType[] = [
 export default function WorkExperienceSection() {
   return (
     <section className="w-full">
-      <h2 className="text-xs font-medium uppercase tracking-wider text-[var(--secondary)]">
+      <h2 className="text-xs font-medium uppercase tracking-wider text-[var(--color-muted)]">
         Experience
       </h2>
       <div className="mt-4">

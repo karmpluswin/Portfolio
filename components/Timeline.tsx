@@ -87,7 +87,7 @@ export default function Timeline({
 
   if (visibleProjects.length === 0) {
     return (
-      <section className="flex min-h-40 items-center justify-center py-10 text-[var(--text)]">
+      <section className="flex min-h-40 items-center justify-center py-10 text-[var(--color-text)]">
         Coming soon
       </section>
     );
@@ -97,13 +97,13 @@ export default function Timeline({
     <section aria-label="Projects" className="space-y-4">
       {showHeader ? (
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-xs font-medium uppercase tracking-wider text-[var(--secondary)]">
+          <h2 className="text-xs font-medium uppercase tracking-wider text-[var(--color-muted)]">
             Projects
           </h2>
           {showAll ? (
             <Link
               href={showAllHref}
-              className="inline-flex items-center justify-center gap-1 rounded-md border border-[var(--line)] px-3 py-1.5 text-xs text-[var(--text)] hover:bg-[var(--line)]/50 transition-colors"
+              className="inline-flex items-center justify-center gap-1 rounded-md border border-[var(--color-border)] px-3 py-1.5 text-xs text-[var(--color-text)] hover:bg-[var(--color-border)]/50 transition-colors"
             >
               <span>Show all</span>
               <ArrowUpRightIcon className="size-3" />
@@ -131,26 +131,26 @@ export default function Timeline({
                     href={project.live}
                     target="_blank"
                     rel="noreferrer"
-                    className="group block overflow-hidden rounded border border-[var(--line)] bg-[var(--line)]/10"
+                    className="group block overflow-hidden rounded border border-[var(--color-border)] bg-[var(--color-border)]/10"
                   >
                     <img
                       src={project.image}
                       alt={project.name}
-                      className="block aspect-[16/9] h-full w-full bg-[var(--background)] object-cover object-center transition-transform duration-300 ease-out group-hover:scale-[1.03]"
+                      className="block aspect-[16/9] h-full w-full bg-[var(--color-bg)] object-cover object-center transition-transform duration-300 ease-out group-hover:scale-[1.03]"
                     />
                   </a>
                 ) : (
-                  <div className="group overflow-hidden rounded border border-[var(--line)] bg-[var(--line)]/10">
+                  <div className="group overflow-hidden rounded border border-[var(--color-border)] bg-[var(--color-border)]/10">
                     <img
                       src={project.image}
                       alt={project.name}
-                      className="block aspect-[16/9] h-full w-full bg-[var(--background)] object-cover object-center transition-transform duration-300 ease-out group-hover:scale-[1.03]"
+                      className="block aspect-[16/9] h-full w-full bg-[var(--color-bg)] object-cover object-center transition-transform duration-300 ease-out group-hover:scale-[1.03]"
                     />
                   </div>
                 )}
 
                 <div className="flex items-center justify-between gap-4">
-                  <p className="text-[1.04rem] text-[var(--text)]">
+                  <p className="text-[1.04rem] text-[var(--color-text)]">
                     {project.date}
                   </p>
                   <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-x-3 gap-y-1 text-right">
@@ -159,12 +159,12 @@ export default function Timeline({
                         href={project.github}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-[1.04rem] text-[var(--text)]"
+                        className="text-[1.04rem] text-[var(--color-text)]"
                       >
                         {project.name}
                       </a>
                     ) : (
-                      <p className="text-[1.04rem] text-[var(--text)]">
+                      <p className="text-[1.04rem] text-[var(--color-text)]">
                         {project.name}
                       </p>
                     )}
@@ -174,7 +174,7 @@ export default function Timeline({
                         target="_blank"
                         rel="noreferrer"
                         aria-label={`${project.name} on GitHub`}
-                        className="inline-flex -m-2 items-center justify-center p-2 text-[var(--secondary)]"
+                        className="inline-flex -m-2 items-center justify-center p-2 text-[var(--color-muted)]"
                       >
                         <GitHubIcon />
                       </a>
@@ -184,7 +184,7 @@ export default function Timeline({
               </div>
             ) : (
               <div className="grid grid-cols-[96px_1fr] gap-5 sm:grid-cols-[1fr_auto]">
-                <p className="text-[1.04rem] text-[var(--text)]">
+                <p className="text-[1.04rem] text-[var(--color-text)]">
                   {project.date}
                 </p>
                 <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-x-3 gap-y-1 text-right">
@@ -193,12 +193,12 @@ export default function Timeline({
                       href={project.live}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-[1.04rem] text-[var(--text)]"
+                      className="text-[1.04rem] text-[var(--color-text)]"
                     >
                       {project.name}
                     </a>
                   ) : (
-                    <p className="text-[1.04rem] text-[var(--text)]">
+                    <p className="text-[1.04rem] text-[var(--color-text)]">
                       {project.name}
                     </p>
                   )}
@@ -208,7 +208,7 @@ export default function Timeline({
                       target="_blank"
                       rel="noreferrer"
                       aria-label={`${project.name} on GitHub`}
-                      className="inline-flex -m-2 items-center justify-center p-2 text-[var(--secondary)]"
+                      className="inline-flex -m-2 items-center justify-center p-2 text-[var(--color-muted)]"
                     >
                       <GitHubIcon />
                     </a>
@@ -227,7 +227,7 @@ export default function Timeline({
                           current === index ? null : index,
                         )
                       }
-                      className="inline-flex -m-2 items-center justify-center p-2 text-[var(--secondary)]"
+                      className="inline-flex -m-2 items-center justify-center p-2 text-[var(--color-muted)]"
                     >
                       <ChevronIcon direction={isOpen ? "up" : "down"} />
                     </button>
@@ -262,7 +262,7 @@ export default function Timeline({
                   ref={(element) => {
                     descriptionRef.current[index] = element;
                   }}
-                  className="pt-3 text-[1rem] text-[var(--secondary)]"
+                  className="pt-3 text-[1rem] text-[var(--color-muted)]"
                 >
                   {project.description}
                 </div>
@@ -271,7 +271,7 @@ export default function Timeline({
 
             {showProjectDividers && !isLastProject ? (
               <div className="pt-6">
-                <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--line)]/70 to-transparent opacity-80" />
+                <div className="h-px w-full bg-[var(--color-border)]" />
               </div>
             ) : null}
           </div>

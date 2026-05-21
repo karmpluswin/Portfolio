@@ -60,10 +60,10 @@ export function GitHubContributions({
             <div className="w-full sm:w-auto">
               <ContributionGraphTotalCount>
                 {({ totalCount, year }) => (
-                  <div className="text-[var(--secondary)] text-center sm:text-left text-sm">
+                  <div className="text-[var(--color-muted)] text-center sm:text-left text-sm">
                     {totalCount.toLocaleString("en")} contributions in {year} on{" "}
                     <a
-                      className="text-[var(--text)] border-b border-[var(--text)] hover:text-[var(--hover)] hover:border-[var(--hover)] transition-colors pb-0.5"
+                      className="text-[var(--color-text)] border-b border-[var(--color-text)] hover:text-[var(--color-link-hover)] hover:border-[var(--color-link-hover)] transition-colors pb-0.5"
                       href={githubProfileUrl}
                       target="_blank"
                       rel="noopener"
@@ -89,7 +89,7 @@ export function GitHubContributions({
 export function GitHubContributionsFallback() {
   return (
     <div className="flex h-40.5 w-full items-center justify-center">
-      <Spinner className="text-[var(--secondary)]" />
+      <Spinner className="text-[var(--color-muted)]" />
     </div>
   );
 }

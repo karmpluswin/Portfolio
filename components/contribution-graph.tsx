@@ -78,11 +78,11 @@ const DEFAULT_LABELS: Labels = {
 };
 
 const THEME = cn(
-  'data-[level="0"]:fill-[var(--line)]',
-  'data-[level="1"]:fill-[var(--secondary)] opacity-40',
-  'data-[level="2"]:fill-[var(--secondary)] opacity-80',
-  'data-[level="3"]:fill-[var(--text)] opacity-60',
-  'data-[level="4"]:fill-[var(--text)]',
+  'data-[level="0"]:fill-[var(--color-border)]',
+  'data-[level="1"]:fill-[var(--color-muted)] opacity-40',
+  'data-[level="2"]:fill-[var(--color-muted)] opacity-80',
+  'data-[level="3"]:fill-[var(--color-text)] opacity-60',
+  'data-[level="4"]:fill-[var(--color-text)]',
   "hover:opacity-100 transition-opacity duration-150 cursor-pointer",
 );
 
@@ -549,7 +549,7 @@ export const ContributionGraphTotalCount = ({
   }
 
   return (
-    <div className={cn("text-[var(--secondary)]", className)} {...props}>
+    <div className={cn("text-[var(--color-muted)]", className)} {...props}>
       {labels.totalCount
         ? labels.totalCount
             .replace("{{count}}", String(totalCount))
@@ -578,7 +578,7 @@ const ContributionGraphTooltip = () => {
         top: `${tooltipPos.y}px`,
       }}
     >
-      <div className="bg-[var(--text)] text-[var(--background)] text-sm px-3 py-1.5 rounded whitespace-nowrap shadow-lg">
+      <div className="bg-[var(--color-text)] text-[var(--color-bg)] text-sm px-3 py-1.5 rounded whitespace-nowrap shadow-lg">
         {text}
       </div>
     </div>
@@ -601,7 +601,7 @@ export const ContributionGraphLegend = ({
 
   return (
     <div className={cn("flex items-center gap-0.75", className)} {...props}>
-      <span className="mr-1 text-[var(--secondary)]">
+      <span className="mr-1 text-[var(--color-muted)]">
         {labels.legend?.less || "Less"}
       </span>
       {new Array(maxLevel + 1).fill(undefined).map((_, level) =>
@@ -621,7 +621,7 @@ export const ContributionGraphLegend = ({
           </svg>
         ),
       )}
-      <span className="ml-1 text-[var(--secondary)]">
+      <span className="ml-1 text-[var(--color-muted)]">
         {labels.legend?.more || "More"}
       </span>
     </div>

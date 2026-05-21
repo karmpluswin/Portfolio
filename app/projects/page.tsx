@@ -12,14 +12,14 @@ export default function ProjectsPage() {
       <main className="mx-auto flex min-h-dvh w-full max-w-[740px] flex-col px-4 py-5 sm:px-5 sm:py-7">
         <div className="mb-2 flex items-center justify-between">
           <h1
-            className={`${nameFont.className} text-[34px] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text)] sm:text-[38px]`}
+            className={`${nameFont.className} text-[34px] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--color-text)] sm:text-[38px]`}
           >
             Projects
           </h1>
           <div className="inline-flex items-center gap-2">
             <Link
               href="/"
-              className="inline-flex items-center justify-center gap-1 rounded-md border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--text)] hover:bg-[var(--line)]/50 transition-colors"
+              className="inline-flex items-center justify-center gap-1 rounded-md border border-[var(--color-border)] px-3 py-1.5 text-sm text-[var(--color-text)] hover:bg-[var(--color-border)]/50 transition-colors"
             >
               <ArrowLeftIcon className="size-4" />
               <span>back</span>
@@ -28,7 +28,7 @@ export default function ProjectsPage() {
           </div>
         </div>
 
-        <div className="my-6 h-px w-full bg-[var(--line)]" />
+        <div className="my-6 h-px w-full bg-[var(--color-border)]" />
 
         <Timeline
           showHeader={false}

@@ -94,7 +94,7 @@ function ChevronIcon({ open }: { open: boolean }) {
       aria-hidden="true"
       viewBox="0 0 24 24"
       className={cn(
-        "size-[18px] text-[var(--secondary)] transition-transform duration-200",
+        "size-[18px] text-[var(--color-muted)] transition-transform duration-200",
         open ? "rotate-180" : "rotate-0",
       )}
       fill="none"
@@ -185,11 +185,11 @@ function ExperienceItem({ experience }: { experience: ExperienceItemType }) {
             <img
               src={experience.companyLogo}
               alt={`${experience.companyName} logo`}
-              className="w-10 h-10 rounded-sm object-cover border border-[var(--line)]"
+              className="w-10 h-10 rounded-sm object-cover border border-[var(--color-border)]"
             />
           ) : null}
 
-          <h3 className={`${nameFont.className} text-[20px] font-semibold leading-snug text-[var(--text)]`}>
+          <h3 className={`${nameFont.className} text-[20px] font-semibold leading-snug text-[var(--color-text)]`}>
             {experience.companyWebsite ? (
               <a
                 href={experience.companyWebsite}
@@ -206,7 +206,7 @@ function ExperienceItem({ experience }: { experience: ExperienceItemType }) {
 
         <div className="flex shrink-0 items-center gap-2">
           {rangeLabel ? (
-            <span className="text-sm tabular-nums text-[var(--secondary)]">
+            <span className="text-sm tabular-nums text-[var(--color-muted)]">
               {rangeLabel}
             </span>
           ) : null}
@@ -243,8 +243,8 @@ function ExperiencePositionBlock({
 
   return (
     <div className="space-y-2">
-      <p className="text-[15px] text-[var(--secondary)]">
-        <span className="text-[var(--text)]">{position.title}</span>
+      <p className="text-[15px] text-[var(--color-muted)]">
+        <span className="text-[var(--color-text)]">{position.title}</span>
         {position.location ? (
           <>
             <span className="px-2">·</span>
@@ -258,7 +258,7 @@ function ExperiencePositionBlock({
           {position.skills.map((skill) => (
             <span
               key={skill}
-              className="inline-flex items-center rounded-md border border-[var(--line)] bg-transparent px-2 py-0.5 text-xs text-[var(--secondary)]"
+              className="inline-flex items-center rounded-md border border-[var(--color-border)] bg-transparent px-2 py-0.5 text-xs text-[var(--color-muted)]"
             >
               {skill}
             </span>
@@ -280,7 +280,7 @@ function ExperiencePositionBlock({
             willChange: "height, opacity",
           }}
         >
-          <div ref={contentRef} className="pt-1 text-[15px] text-[var(--secondary)]">
+          <div ref={contentRef} className="pt-1 text-[15px] text-[var(--color-muted)]">
             <ReactMarkdown
               components={{
                 a: (props) => <a {...props} target="_blank" rel="noreferrer" />,
@@ -288,7 +288,7 @@ function ExperiencePositionBlock({
                 ul: (props) => (
                   <ul
                     {...props}
-                    className="ml-5 list-disc space-y-1 marker:text-[var(--secondary)]"
+                    className="ml-5 list-disc space-y-1 marker:text-[var(--color-muted)]"
                   />
                 ),
                 li: (props) => <li {...props} className="leading-relaxed" />,

@@ -57,7 +57,7 @@ export default function TechStackSection() {
   return (
     <TooltipProvider>
       <section className="w-full">
-        <h2 className="text-xs font-medium uppercase tracking-wider text-[var(--secondary)]">
+        <h2 className="text-xs font-medium uppercase tracking-wider text-[var(--color-muted)]">
           Tech Stack
         </h2>
         <div className="mt-4 flex flex-wrap gap-3 sm:gap-4">
@@ -83,7 +83,7 @@ export default function TechStackSection() {
               </TooltipTrigger>
               <TooltipContent
                 side="top"
-                className="rounded-md bg-slate-900 dark:bg-slate-100 px-2 py-1 text-xs font-medium text-white dark:text-slate-900 shadow-lg"
+                className="rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs font-medium text-[var(--color-text)] shadow-lg"
               >
                 {tech.name}
               </TooltipContent>

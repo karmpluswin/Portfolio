@@ -57,7 +57,7 @@ export default function Footer() {
 
   return (
     <footer
-      className="mt-auto border-t border-[var(--line)] pt-4 text-[var(--secondary)]"
+      className="mt-auto border-t border-[var(--color-border)] pt-4 text-[var(--color-muted)]"
       aria-label="Site footer"
     >
       <div className="mx-auto max-w-[740px] px-4">
@@ -72,7 +72,7 @@ export default function Footer() {
               href="https://github.com/karmpluswin"
               target="_blank"
               rel="noreferrer"
-              className="text-[var(--secondary)] hover:text-[var(--hover)] transition-colors"
+              className="text-[var(--color-muted)] hover:text-[var(--color-link-hover)] transition-colors"
               aria-label="GitHub"
             >
               <GithubIcon className="size-5" />
@@ -81,7 +81,7 @@ export default function Footer() {
               href="https://linkedin.com/in/karmpluswin"
               target="_blank"
               rel="noreferrer"
-              className="text-[var(--secondary)] hover:text-[var(--hover)] transition-colors"
+              className="text-[var(--color-muted)] hover:text-[var(--color-link-hover)] transition-colors"
               aria-label="LinkedIn"
             >
               <LinkedinIcon className="size-5" />
@@ -90,14 +90,14 @@ export default function Footer() {
               href="https://x.com/karmjeetchauhan"
               target="_blank"
               rel="noreferrer"
-              className="text-[var(--secondary)] hover:text-[var(--hover)] transition-colors"
+              className="text-[var(--color-muted)] hover:text-[var(--color-link-hover)] transition-colors"
               aria-label="X (Twitter)"
             >
               <XIcon className="size-4" />
             </a>
             <a
               href="mailto:karmpluswin@gmail.com"
-              className="text-[var(--secondary)] hover:text-[var(--hover)] transition-colors"
+              className="text-[var(--color-muted)] hover:text-[var(--color-link-hover)] transition-colors"
               aria-label="Email"
             >
               <Mail className="size-5" />

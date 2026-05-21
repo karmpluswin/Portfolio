@@ -19,7 +19,7 @@ export default function AppleHelloEffectLanguagesDemo({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.22 }}
-        className="text-[var(--text)]"
+        className="text-[var(--color-text)]"
       >
         <AppleHelloEffectEnglish
           className={svgClassName}

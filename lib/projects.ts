@@ -10,7 +10,7 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
-    date: "May 2026",
+    date: "June 2026",
     name: "Coming soon",
     github: "#",
     live: "#",
@@ -19,7 +19,7 @@ export const PROJECTS: Project[] = [
     featured: true,
   },
   {
-    date: "May 2026",
+    date: "June 2026",
     name: "Coming soon",
     github: "#",
     live: "#",
@@ -28,7 +28,7 @@ export const PROJECTS: Project[] = [
     featured: true,
   },
   {
-    date: "May 2026",
+    date: "June 2026",
     name: "Coming soon",
     github: "#",
     live: "#",

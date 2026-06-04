@@ -15,10 +15,10 @@ const WORK_EXPERIENCE: ExperienceItemType[] = [
         location: "Ahemdabad",
         employmentPeriod: {
           start: "01.2026",
+          end: "06.2026",
         },
-        description: `- Built backend systems in Java for VFMS to track and monitor mission vehicles in real time
-- Developed Telemedicine platform supporting remote medical communication via satellite for the Indian Army
-- Worked with GraphHopper and GeoServer to enable geospatial routing and mapping solutions`,
+        description: `- Built an offline Java EE vehicle tracking platform at ISRO SAC using GraphHopper and GeoServer to reconstruct NavIC/GPS routes on OSM road networks with ~90-95% accuracy
+- Engineered trip detection engine using ignition state transitions, Haversine distance calculation and POI proximity resolution to process live VTU telemetry across ISRO campus fleet`,
         skills: [
           "Java",
           "Spring Boot",
@@ -29,7 +29,7 @@ const WORK_EXPERIENCE: ExperienceItemType[] = [
         ],
       },
     ],
-    isCurrentEmployer: true,
+    isCurrentEmployer: false,
   },
 ];
 

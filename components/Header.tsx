@@ -10,6 +10,7 @@ const links = [
   { label: "X", href: "https://x.com/karmpluswin" },
   { label: "GitHub", href: "https://github.com/karmpluswin" },
   { label: "Linkedin", href: "https://linkedin.com/in/karmjeetchauhan" },
+  { label: "Resume", href: "https://cataas.com/cat"}
 ];
 
 function getISTTime() {

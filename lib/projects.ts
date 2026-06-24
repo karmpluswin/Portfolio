@@ -20,11 +20,11 @@ export const PROJECTS: Project[] = [
   },
   {
     date: "June 2026",
-    name: "Coming soon",
-    github: "#",
-    live: "#",
-    image: "/project2.jpg",
-    description: "Coming soon.",
+    name: "Kairo",
+    github: "https://github.com/karmpluswin/Kairo",
+    live: "https://kairo-tracker.vercel.app",
+    image: "/kairo.png",
+    description: "A clean, minimal seasonal anime tracker. Browse currently airing shows, track your watch progress episode by episode and filter by genre, all powered by the Jikan MAL API.",
     featured: true,
   },
   {

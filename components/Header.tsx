@@ -7,10 +7,11 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { nameFont } from "@/app/fonts";
 
 const links = [
+  { label: "Email", href: "mailto:karmpluswin@gmail.com" },
   { label: "X", href: "https://x.com/karmpluswin" },
   { label: "GitHub", href: "https://github.com/karmpluswin" },
   { label: "Linkedin", href: "https://linkedin.com/in/karmjeetchauhan" },
-  { label: "Resume", href: "https://cataas.com/cat"}
+  // { label: "Resume", href: "https://cataas.com/cat"}
 ];
 
 function getISTTime() {

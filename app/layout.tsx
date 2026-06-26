@@ -5,7 +5,7 @@ import "./globals.css";
 import InitialLoaderGate from "@/components/InitialLoaderGate";
 
 export const metadata: Metadata = {
-  title: "Karmjeet Chauhan — Frontend Developer",
+  title: "Karmjeet Chauhan",
   description: "Personal portfolio of Karmjeet Chauhan",
   icons: {
     icon: "/pfp.jpg",

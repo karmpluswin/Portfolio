@@ -21,7 +21,6 @@ const WORK_EXPERIENCE: ExperienceItemType[] = [
 - Engineered trip detection engine using ignition state transitions, Haversine distance calculation and POI proximity resolution to process live VTU telemetry across ISRO campus fleet`,
         skills: [
           "Java",
-          "Spring Boot",
           "REST APIs",
           "MySQL",
           "GraphHopper",

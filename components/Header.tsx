@@ -2,16 +2,15 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Mail, FileText } from "lucide-react";
 
 import ThemeToggle from "@/components/ThemeToggle";
 import { nameFont } from "@/app/fonts";
 
 const links = [
-  { label: "Email", href: "mailto:karmpluswin@gmail.com" },
   { label: "X", href: "https://x.com/karmpluswin" },
   { label: "GitHub", href: "https://github.com/karmpluswin" },
   { label: "Linkedin", href: "https://linkedin.com/in/karmjeetchauhan" },
-  // { label: "Resume", href: "https://cataas.com/cat"}
 ];
 
 function getISTTime() {
@@ -40,7 +39,7 @@ export default function Header() {
       <div className="flex items-start justify-between gap-5">
         <div className="min-w-0">
           <Image
-            src="/pfp.svg"
+            src="/icon.jpg"
             width={100}
             height={100}
             alt="Karmjeet Chauhan"
@@ -61,18 +60,14 @@ export default function Header() {
 
       <div className="grid grid-cols-[1fr_auto] items-start gap-x-5 gap-y-1">
         <p className="min-w-0 text-[var(--color-text)]">
-          Think Different. Born in 2004. India.
-          {/* Software Engineer. Born in 2004. India. */}
+        Fontend Developer. Born in 2004. India.
         </p>
         <time className="shrink-0 whitespace-nowrap text-right tabular-nums text-[var(--color-text)] hidden md:block">
           {time}
         </time>
       </div>
 
-      <nav
-        aria-label="Personal links"
-        className="flex flex-wrap gap-x-2 gap-y-1"
-      >
+      <nav aria-label="Personal links" className="flex flex-wrap gap-x-2 gap-y-1">
         {links.map((link, index) => (
           <span key={link.label} className="inline-flex gap-x-2">
             <a href={link.href} target="_blank" rel="noreferrer">
@@ -82,6 +77,25 @@ export default function Header() {
           </span>
         ))}
       </nav>
+<div className="mt-4 flex flex-wrap gap-3">
+  <a
+  href="mailto:karmpluswin@gmail.com"
+  className="inline-flex items-center gap-2 rounded-[6px] border border-[var(--color-border)] px-3 py-1.5 text-sm text-[var(--color-text)] transition-opacity hover:border-white/80 hover:bg-[var(--color-border)]/50"
+>
+  <Mail size={15} strokeWidth={2} />
+  Contact Me
+</a>
+
+  <a
+    href="/resume.pdf"
+    target="_blank"
+    rel="noreferrer"
+    className="inline-flex items-center gap-2 rounded-[6px] border border-[var(--color-border)] px-3 py-1.5 text-sm text-[var(--color-text)] transition-opacity hover:border-white/80 hover:bg-[var(--color-border)]/50"
+  >
+    <FileText size={15} strokeWidth={2} />
+    Resume
+  </a>
+</div>
     </header>
   );
 }

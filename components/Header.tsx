@@ -60,7 +60,7 @@ export default function Header() {
 
       <div className="grid grid-cols-[1fr_auto] items-start gap-x-5 gap-y-1">
         <p className="min-w-0 text-[var(--color-text)]">
-        Fontend Developer. Born in 2004. India.
+        Software Engineer. Born in 2004. India.
         </p>
         <time className="shrink-0 whitespace-nowrap text-right tabular-nums text-[var(--color-text)] hidden md:block">
           {time}

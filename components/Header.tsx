@@ -39,7 +39,7 @@ export default function Header() {
       <div className="flex items-start justify-between gap-5">
         <div className="min-w-0">
           <Image
-            src="/icon.jpg"
+            src="/pfp.jpg"
             width={100}
             height={100}
             alt="Karmjeet Chauhan"

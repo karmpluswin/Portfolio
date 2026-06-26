@@ -8,9 +8,9 @@ export const metadata: Metadata = {
   title: "Karmjeet Chauhan — Frontend Developer",
   description: "Personal portfolio of Karmjeet Chauhan",
   icons: {
-    icon: "/icon.jpg",
-    shortcut: "/icon.jpg",
-    apple: "/icon.jpg",
+    icon: "/pfp.jpg",
+    shortcut: "/pfp.jpg",
+    apple: "/pfp.jpg",
   },
 };
 
